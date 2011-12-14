@@ -6,7 +6,8 @@
 	This client has some hard coded (but real) tweets which are passed to the
 	API.
 
-	You need to add your Developer Keys found on the Mashape Dashboard.
+	You need to add your Developer Keys found on the Mashape Dashboard and subscribe
+	to a plan on the Mashape API page (http://www.mashape.com/apis/Sentiment+Analysis/pricing)
 """
 from SentimentAnalysis import SentimentAnalysis
 #add your keys below
@@ -29,33 +30,37 @@ sampletexts = ["@getflockler must have a great designer cause it looks hot!! :-)
 highestnumber = 0
 highesttext = False
 
-for sampletext in sampletexts:
-	print "Text: " + sampletext
-	
-	#Here we do the actual classification.  We pass in a language
-	#identifier and the text we wish to be classified.
-	classification = chatterboxapi.classifytext("en",sampletext)
-	
-	#Uncomment this line if you want to inspect the result.
-	#print classification
-	
-	#Value is the predicted strength of the sentiment in the text
-	sentiment_value = classification['value']
-	
-	if sentiment_value > highestnumber:
-		highestnumber = sentiment_value
-		highesttext = sampletext
+try:
+	for sampletext in sampletexts:
+		print "Text: " + sampletext
 		
-	#Sent is the sentiment class. 1 is positive, -1 is negative
-	sentiment_label = classification['sent']
-	
-	if abs(sentiment_value) < 0.25:
-		#As a consumer of this API you will need to experiment with
-		#which cut-off value works best for your application.
-		print "WEAK: Hmm. Weak or netural sentiment it seems"
-	elif sentiment_label > 0:
-		print "POS: W00t! Seems like a positive message"
-	else:
-		print "NEG: Oh foo. Seems like a negative one"
+		#Here we do the actual classification.  We pass in a language
+		#identifier and the text we wish to be classified.
+		classification = chatterboxapi.classifytext("en",sampletext)
+		
+		#Uncomment this line if you want to inspect the result.
+		#print classification
+		
+		#Value is the predicted strength of the sentiment in the text
+		sentiment_value = classification['value']
+		
+		if sentiment_value > highestnumber:
+			highestnumber = sentiment_value
+			highesttext = sampletext
+			
+		#Sent is the sentiment class. 1 is positive, -1 is negative
+		sentiment_label = classification['sent']
+		
+		if abs(sentiment_value) < 0.25:
+			#As a consumer of this API you will need to experiment with
+			#which cut-off value works best for your application.
+			print "WEAK: Hmm. Weak or netural sentiment it seems"
+		elif sentiment_label > 0:
+			print "POS: W00t! Seems like a positive message"
+		else:
+			print "NEG: Oh foo. Seems like a negative one"
 
-print "The most positive message is", highesttext
+	print "The most positive message is", highesttext
+except KeyError:
+	#Errors should be handled more elegantly than this.
+	print classification
