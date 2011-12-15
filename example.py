@@ -6,16 +6,23 @@
 	This client has some hard coded (but real) tweets which are passed to the
 	API.
 
-	You need to add your Developer Keys found on the Mashape Dashboard and subscribe
-	to a plan on the Mashape API page (http://www.mashape.com/apis/Sentiment+Analysis/pricing)
+	You need to add your Developer Keys found on the Mashape Dashboard.
+	If you are going to use the paid for API you must subscibe to a plan on 
+	the Mashape API page (http://www.mashape.com/apis/Sentiment+Analysis/pricing)
 """
 from SentimentAnalysis import SentimentAnalysis
+from SentimentAnalysisFree import SentimentAnalysisFree
+
 #add your keys below
 public_key = ""
 private_key = ""
 
-#build the API object with your keys
-chatterboxapi = SentimentAnalysis(public_key, private_key)
+#build the Free API object with your keys
+chatterboxapi = SentimentAnalysisFree(public_key, private_key)
+
+#if you wish to use the paid-for API uncomment the following line
+#chatterboxapi = SentimentAnalysis(public_key, private_key)
+
 
 #Our hard coded sample tweets.  Your application will figure out 
 #what it needs...
@@ -63,4 +70,5 @@ try:
 	print "The most positive message is", highesttext
 except KeyError:
 	#Errors should be handled more elegantly than this.
-	print classification
+	print "error code: ", classification['code']
+	print "error message: ", classification['message']
