@@ -22,29 +22,27 @@
 
 import urllib
 import urllib2
-import httplib2
 import json
 import threading
 from urlparse import urlparse
-from mashape.config.module_info import ModuleInfo
 from mashape.http.url_utils import UrlUtils
 from mashape.http.auth_utils import AuthUtils
 from mashape.exception.client_exception import MashapeClientException
 
 class HttpClient:
-	def do_call(self, http_method, url, parameters, has_mashape_auth, public_key, private_key, callback=None, parse_json=True):
+	def do_call(self, http_method, url, parameters, public_key, private_key, callback=None, parse_json=True):
 		if(callback != None):
-			def thread_function(http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json):
-				result = self._do_call(http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json)
+			def thread_function(http_method, url, parameters, public_key, private_key, parse_json):
+				result = self._do_call(http_method, url, parameters, public_key, private_key, parse_json)
 				callback(result)
-			thread = threading.Thread(target=thread_function, args=(http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json))
+			thread = threading.Thread(target=thread_function, args=(http_method, url, parameters, public_key, private_key, parse_json))
 			thread.start()
 			return thread
 		else:
-			return self._do_call(http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json)
+			return self._do_call(http_method, url, parameters, public_key, private_key, parse_json)
 
 
-	def _do_call(self, http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json):
+	def _do_call(self, http_method, url, parameters, public_key, private_key, parse_json):
 		if parameters == None:
 			parameters = {};
 		else:
@@ -60,29 +58,27 @@ class HttpClient:
 			headers["Accept"] = "application/json"
 
 		headers.update(UrlUtils.generate_client_headers())
-		if has_mashape_auth:
+		
+		if (public_key != None and private_key != None):
 			headers.update(AuthUtils.generate_authentication_header(public_key, private_key))
 			
-		# if you have SSL issues (invalid certificate), try:
-		# h = httplib2.Http(disable_ssl_certificate_validation=True) 
-		h = httplib2.Http()
 		qpos = url.find("?")
 		if ( qpos > 0 ):
 			url = url[:qpos]
 		url = UrlUtils.replace_base_url_parameters(url, parameters)
 
 		params = urllib.urlencode(parameters)
-		request = urllib2.Request(url, params, headers)
 		if (http_method == "GET"):
 			url += "?" + params
-			request = urllib2.Request(url, None, headers)
 		opener = urllib2.build_opener(urllib2.HTTPHandler)
+		request = urllib2.Request(url, params, headers)
+		request.add_header('Content-Type', 'application/json')
 		request.get_method = lambda: http_method
 		try:
 			responseValue = opener.open(request).read()
 		except:
 			import sys
-			raise MashapeClientException("Error executing the request " + str(sys.exc_info()[1]), 2000)
+			raise MashapeClientException("Error executing the request " + str(sys.exc_info()[1]))
 
 		responseJson = None
 		if responseValue != None and parse_json:

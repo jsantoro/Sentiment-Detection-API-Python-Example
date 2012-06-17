@@ -13,5 +13,5 @@ class SentimentAnalysisFree:
 		              "text" : text,
 		              "exclude" : exclude}
 		mashape_client = HttpClient()
-		response = mashape_client.do_call("POST", "http://free-dev.cbanalytics.co.uk/sentiment/current/classify_text/", parameters, True, self.publicKey, self.privateKey, mashape_callback, True)
+		response = mashape_client.do_call("POST", "https://chatterbox-analytics-sentiment-analysis-free.p.mashape.com/sentiment/current/classify_text/", parameters, self.publicKey, self.privateKey, mashape_callback, True)
 		return response

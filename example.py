@@ -6,11 +6,9 @@
 	This client has some hard coded (but real) tweets which are passed to the
 	API.
 
-	You need to add your Developer Keys found on the Mashape Dashboard.
-	If you are going to use the paid for API you must subscibe to a plan on 
-	the Mashape API page (http://www.mashape.com/apis/Sentiment+Analysis/pricing)
+	You need to add your keys found on the Mashape Dashboard.
+
 """
-from SentimentAnalysis import SentimentAnalysis
 from SentimentAnalysisFree import SentimentAnalysisFree
 
 #add your keys below
