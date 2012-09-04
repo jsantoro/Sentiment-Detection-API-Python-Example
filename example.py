@@ -18,10 +18,6 @@ private_key = ""
 #build the Free API object with your keys
 chatterboxapi = SentimentAnalysisFree(public_key, private_key)
 
-#if you wish to use the paid-for API uncomment the following line
-#chatterboxapi = SentimentAnalysis(public_key, private_key)
-
-
 #Our hard coded sample tweets.  Your application will figure out 
 #what it needs...
 sampletexts = ["@getflockler must have a great designer cause it looks hot!! :-)",
@@ -44,17 +40,17 @@ try:
 		classification = chatterboxapi.classifytext("en",sampletext)
 		
 		#Uncomment this line if you want to inspect the result.
-		#print classification
+		#print classification.body
 		
 		#Value is the predicted strength of the sentiment in the text
-		sentiment_value = classification['value']
+		sentiment_value = classification.body['value']
 		
 		if sentiment_value > highestnumber:
 			highestnumber = sentiment_value
 			highesttext = sampletext
 			
 		#Sent is the sentiment class. 1 is positive, -1 is negative
-		sentiment_label = classification['sent']
+		sentiment_label = classification.body['sent']
 		
 		if abs(sentiment_value) < 0.25:
 			#As a consumer of this API you will need to experiment with
